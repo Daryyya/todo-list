@@ -19,6 +19,7 @@ export const createTodo = async (todo, onReceived) => {
       title,
       description,
       date,
+      isDone: false,
     });
 
     fetchAll(onReceived)
@@ -33,15 +34,9 @@ export const deleteTodo = async (id, onReceived) => {
 }
 
 export const updateTodo = async (id, todo, onReceived) => {
-  const { title, description, date } = todo;
   const todoRef = doc(firebaseDB, "todo", id);
 
-
-  await updateDoc(todoRef, {
-    title: title,
-    description: description, 
-    date: date,
-  });
+  await updateDoc(todoRef, todo);
 
   fetchAll(onReceived)
 }

@@ -20,6 +20,7 @@ const Form = ({ onReceived }) => {
       <input type="text" placeholder="title" name="title" />
       <input type="text" placeholder="description" name="description" />
       <input type="date" name="date" />
+      <input type='file' name='file'/>
       <button type="submit">OK</button>
     </form>
   );
