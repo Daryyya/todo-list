@@ -1,0 +1,38 @@
+.popup {
+    display: flex;
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(10, 14, 25, 0.5);
+    }
+    
+    .modal {
+        padding: 30px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 20px;
+        margin: auto;
+        background: #ffffff;
+        border-radius: 20px;
+    
+        &__input {
+            min-width: 300px;
+            min-height: 30px;
+            font-size: 16px;
+        }
+    
+        &__button {
+            font-weight: 600;
+            padding: 5px 35px;
+            color:rgb(9, 53, 9);
+            background-color: rgb(255, 208, 0);
+            border: 1px solid rgb(9, 53, 9);
+            border-radius: 8px;
+            transition: .3s;
+            &:hover {
+                box-shadow: 1px 1px 5px rgb(9, 53, 9);
+            }
+        }
+      }

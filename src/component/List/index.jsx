@@ -1,5 +1,8 @@
 import React, { useState } from "react";
 import { deleteTodo, updateTodo } from "../../todo-api";
+import Modal from "../Modal";
+import Portal from "../Portal";
+import style from './style.module.scss';
 
 const List = ({ todoList, onReceived }) => {
   const [editTodo, setEditTodo] = useState(null);
@@ -30,32 +33,24 @@ const List = ({ todoList, onReceived }) => {
         const { title, description, date, id, isDone } = todo;
         return (
             <div key={id} style={isDone ? {textDecoration: 'line-through', opacity: 0.5} : null}>
-              <p>{title}</p>
-              <p>{description}</p>
-              <p>{date}</p>
+              <p>Task: {title}</p>
+              <p>Description: {description || 'no description'}</p>
+              <p>Date to: {date || 'no data'}</p>
               
 
-              <button onClick={() => handleDelete(id)}>DELETE</button>
-              <button onClick={() => setEditTodo(todo)}>EDIT</button>
-              <button onClick={() => handleUpdateStatus(id, todo)}>
+              <button className={style.delete} onClick={() => handleDelete(id)}>DELETE</button>
+              <button className={style.edit} onClick={() => setEditTodo(todo)}>EDIT</button>
+              <button className={style.done} onClick={() => handleUpdateStatus(id, todo)}>
                 Mark as {isDone ? "not done" : "done"}
             </button>
               <hr></hr>
             </div>
           )
       })}
-
-      {editTodo && (
-        <form onSubmit={handleUpdateForm}>
-          <input type="text" defaultValue={editTodo.title} name="title" />
-          <input type="text" defaultValue={editTodo.description} name="description" />
-          <input type="date" defaultValue={editTodo.date} name="date" />
-          <input type='file' defaultValue={editTodo.file} name='file'/>
-          <button type="submit">
-            SAVE
-          </button>
-        </form>
-      )}
+      <Portal>
+      {editTodo && <Modal handleUpdateForm={handleUpdateForm} editTodo={editTodo}/>}
+      </Portal>
+      
     </>
   );
 };
