@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { createTodo } from "../../todo-api";
 import style from './style.module.scss'
 
-const Form = ({ onReceived, setFormIsOpen }) => {
+const Form = ({ onReceived, onSubmitFinish }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     const data = new FormData(e.target);
@@ -14,7 +14,7 @@ const Form = ({ onReceived, setFormIsOpen }) => {
     }
 
     createTodo(value, onReceived);
-    setFormIsOpen(false)
+    onSubmitFinish()
   };
 
   return (

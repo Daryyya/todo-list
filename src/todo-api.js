@@ -1,5 +1,28 @@
 import { collection, getDocs, addDoc, deleteDoc, doc, updateDoc } from "firebase/firestore/lite";
-import { firebaseDB } from "./firebase";
+import { ref as storageRef, uploadBytes, listAll, getDownloadURL } from 'firebase/storage'
+import { firebaseDB, firestorage } from "./firebase";
+
+
+const fetchAllFiles = async () => {
+  const ref = storageRef(firestorage, `files/`);
+  const { items } = await listAll(ref);
+
+  const unpackedItems = await Promise.all(
+    items.map(async (item) => {
+      const link = await getDownloadURL(item);
+      return { name: item.name, link }
+    })
+  );
+
+  return unpackedItems.reduce(
+    (acc, item) => ({...acc, [item.name]: item.link}),
+    {}
+    )
+}
+const uploadFile = async (file, docId) => {
+  const ref = storageRef(firestorage, `files/${docId}`)
+  await uploadBytes(ref, file)
+}
 
 export const fetchAll = async (onReceived) => {
   const testCol = collection(firebaseDB, "todo");
@@ -8,19 +31,26 @@ export const fetchAll = async (onReceived) => {
     ...doc.data(),
     id: doc.id
   }));
+  
+  const files = await fetchAllFiles()
+  list.forEach((todo) => {
+    todo.file = files[todo.id]
+  })
 
   onReceived(list);
 };
 
 export const createTodo = async (todo, onReceived) => {
   try {
-    const { title, description, date } = todo;
-    await addDoc(collection(firebaseDB, "todo"), {
-      title,
-      description,
-      date,
+    const { file, ...baseTodo } = todo;
+    const doc = await addDoc(collection(firebaseDB, "todo"), {
+      ...baseTodo,
       isDone: false,
     });
+
+    if (file?.name) {
+      await uploadFile(file, doc.id);
+    }
 
     fetchAll(onReceived)
   } catch (e) {
@@ -35,8 +65,13 @@ export const deleteTodo = async (id, onReceived) => {
 
 export const updateTodo = async (id, todo, onReceived) => {
   const todoRef = doc(firebaseDB, "todo", id);
+  const { file, ...baseTodo } = todo;
 
-  await updateDoc(todoRef, todo);
+  await updateDoc(todoRef, baseTodo);
+
+  if (file?.name) {
+    await uploadFile(file, id);
+  }
 
   fetchAll(onReceived)
 }
