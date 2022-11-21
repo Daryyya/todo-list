@@ -53,11 +53,11 @@ const List = ({ todoList, onReceived }) => {
             >
               DELETE
             </button>
-            <button className={style.edit} onClick={() => setEditTodo(todo)}>
+            <button className={`${style.edit} ${style.button}`} onClick={() => setEditTodo(todo)}>
               EDIT
             </button>
             <button
-              className={style.done}
+              className={`${style.done} ${style.button}`}
               onClick={() => handleUpdateStatus(id, todo)}
             >
               Mark as {isDone ? "not done" : "done"}
